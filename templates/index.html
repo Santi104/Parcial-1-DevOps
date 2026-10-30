@@ -52,7 +52,7 @@
 
             <div class="stat-card">
                 <div class="number">
-                    {{ productos|length }}
+                    {{ total_productos }}
                 </div>
 
                 <div class="label">
@@ -62,7 +62,7 @@
 
             <div class="stat-card">
                 <div class="number">
-                    {{ productos|length }}
+                    {{ total_productos }}
                 </div>
 
                 <div class="label">
@@ -187,6 +187,26 @@
         <section class="card">
 
             <h2>📋 Productos registrados</h2>
+
+            <!-- Nuevas consultas: se pueden utilizar por separado o combinadas. -->
+            <form action="{{ url_for('inicio') }}" method="GET" class="filtros-inventario">
+                <div class="form-group">
+                    <label for="filtro-categoria">Filtrar por categoría</label>
+                    <select id="filtro-categoria" name="categoria">
+                        <option value="">Todas las categorías</option>
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria }}" {% if categoria == categoria_seleccionada %}selected{% endif %}>{{ categoria }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <label class="filtro-agotados">
+                    <input type="checkbox" name="agotados" value="1" {% if solo_agotados %}checked{% endif %}>
+                    Mostrar solo productos agotados (0 unidades)
+                </label>
+                <button type="submit" class="btn btn-primary">Aplicar filtros</button>
+                <a href="{{ url_for('inicio') }}" class="btn btn-edit">Limpiar filtros</a>
+            </form>
+            <p class="resumen-filtros">Resultados encontrados: {{ productos|length }}</p>
 
             <div class="table-container">
 

@@ -1,16 +1,25 @@
 from flask import Flask, render_template, request, redirect, url_for
 from database import obtener_productos, obtener_conexion
+from filtros import filtrar_productos
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def inicio():
-    productos = obtener_productos()
+    todos_los_productos = obtener_productos()
+    categoria = request.args.get("categoria", "").strip()
+    solo_agotados = request.args.get("agotados") == "1"
+    categorias = sorted({str(p[2]) for p in todos_los_productos if p[2] is not None}, key=str.casefold)
+    productos = filtrar_productos(todos_los_productos, categoria, solo_agotados)
 
     return render_template(
         "index.html",
-        productos=productos
+        productos=productos,
+        total_productos=len(todos_los_productos),
+        categorias=categorias,
+        categoria_seleccionada=categoria,
+        solo_agotados=solo_agotados
     )
 
 
