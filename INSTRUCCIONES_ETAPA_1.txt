@@ -1,0 +1,21 @@
+ETAPA 1 — FUNCIONALIDADES Y PRUEBAS
+
+1. Realiza una copia de seguridad del proyecto original.
+2. Copia el contenido de esta carpeta a la raíz del repositorio local.
+   Se agregan filtros.py, pytest.ini y tests/.
+   Se actualizan app.py, templates/index.html, static/style.css y requirements.txt.
+   No se cambia database.py, init.sql, las rutas CRUD ni Docker.
+3. En VS Code, dentro del proyecto, crea/activa el entorno virtual:
+   py -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+4. Instala dependencias:
+   python -m pip install -r requirements.txt
+5. Ejecuta pruebas:
+   python -m pytest -v
+6. Para probar la aplicación real, inicia PostgreSQL según el docker-compose.yml del proyecto
+   y abre la aplicación como lo hacían en el primer parcial.
+7. En la tabla de productos, prueba los filtros por separado y juntos.
+
+NOTA: Las pruebas de integración HTTP usan una base simulada mediante mock.
+No sustituyen la comprobación manual con PostgreSQL y Docker reales.
+Todavía NO se han configurado CI/CD ni publicación en GHCR.
