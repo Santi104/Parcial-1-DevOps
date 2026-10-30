@@ -286,3 +286,10 @@ tbody tr:hover {
         height: 60px;
     }
 }
+
+/* Filtros de consulta del segundo parcial. */
+.filtros-inventario { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; margin: 18px 0; }
+.filtros-inventario .form-group { min-width: 200px; flex: 1 1 200px; }
+.filtros-inventario select { width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px; background: white; }
+.filtro-agotados { display: flex; align-items: center; gap: 8px; padding-bottom: 11px; }
+.resumen-filtros { margin-bottom: 12px; color: #4b5563; }
