@@ -9,7 +9,7 @@ PRODUCTOS = [
 
 
 def test_sin_filtros_conserva_todos_los_productos():
-    assert filtrar_productos(PRODUCTOS) == []
+    assert filtrar_productos(PRODUCTOS) == PRODUCTOS
 
 
 def test_filtro_categoria_muestra_solo_coincidencias():
