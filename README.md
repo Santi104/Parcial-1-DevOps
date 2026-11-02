@@ -1,432 +1,299 @@
-# Sistema de Inventario - DevOps
+# Sistema de Inventario — Segundo Parcial DevOps
 
-**Equipo: 2** 
+**Asignatura:** Electiva DevOps  
+**Evaluación:** Segundo parcial — Evolución del proyecto DevOps  
+**Docente:** Ph.D. Angela María Vargas Arcila  
+**Equipo:** 2  
+**Repositorio:** https://github.com/Santi104/Parcial-1-DevOps
 
-Proyecto desarrollado para el **Primer Parcial – DevOps (Electiva)**.
+## Integrantes
 
----
+- Maria del Mar Perez Montenegro
+- Edi Santiago Monzon
+- David Segundo Giron Acosta
+- Ana Judith Velasquez Cañaveral
 
-## 2. Integrantes
+## 1. Descripción y funcionalidades
 
-- [Maria del Mar Perez Montenegro]
-- [Edi Santiago Monzon]
-- [David Segundo Giron Acosta]
-- [Ana Judith Velasquez Cañaveral]
+Aplicación web de gestión de inventario desarrollada con **Flask** y **PostgreSQL**. Conserva las operaciones CRUD del primer parcial y añade dos funcionalidades para el segundo parcial.
 
----
+**Operaciones existentes:** registrar, consultar, editar y eliminar productos. Cada registro contiene ID, nombre, categoría, precio y cantidad.
 
-## 3. Descripción
+**Nuevas funcionalidades:**
 
-El proyecto consiste en una aplicación web para la gestión de un inventario de productos.
+1. **Filtrado por categoría:** muestra únicamente los productos de la categoría seleccionada.
+2. **Consulta de productos agotados:** muestra productos cuya cantidad es cero.
 
-La aplicación permite realizar las operaciones principales de un CRUD:
+Ambos filtros pueden utilizarse conjuntamente y se aplican desde la interfaz web.
 
-- Crear productos.
-- Consultar productos.
-- Editar productos.
-- Eliminar productos.
+## 2. Tecnologías y arquitectura
 
-Cada producto contiene la siguiente información:
+| Componente | Tecnología |
+|---|---|
+| Aplicación web | Python 3.12, Flask, HTML5 y CSS3 |
+| Base de datos | PostgreSQL 18 |
+| Contenedores | Docker y Docker Compose |
+| Pruebas | pytest |
+| Versionamiento | Git y GitHub |
+| Automatización | GitHub Actions |
+| Registro de imágenes | GitHub Container Registry (GHCR) |
 
-- ID
-- Nombre
-- Categoría
-- Precio
-- Cantidad
-
-La aplicación fue desarrollada utilizando Flask como framework web, PostgreSQL como sistema de gestión de base de datos y Docker y Docker Compose para la ejecución de los servicios mediante contenedores.
-
----
-
-## 4. Tecnologías utilizadas
-
-Las principales tecnologías utilizadas en el proyecto son:
-
-- **Python 3.12**
-- **Flask**
-- **PostgreSQL 18**
-- **HTML5**
-- **CSS3**
-- **Docker**
-- **Docker Compose**
-- **Git**
-- **GitHub**
-
----
-
-## 5. Arquitectura
-
-La solución está compuesta principalmente por dos servicios:
-
-1. **Web:** Contenedor encargado de ejecutar la aplicación desarrollada con Flask.
-2. **Base de datos:** Contenedor encargado de ejecutar PostgreSQL.
-
-Los dos servicios se comunican mediante la red creada por Docker Compose.
-
-La base de datos utiliza un volumen Docker para mantener la información almacenada aunque los contenedores sean detenidos y posteriormente iniciados nuevamente.
-
-### Diagrama de arquitectura
+La aplicación se ejecuta en un contenedor `web` (Flask, puerto interno 5000), conectado mediante la red de Docker Compose a un contenedor `db` (PostgreSQL, puerto interno 5432). El navegador accede por **http://localhost:8080**. Los datos se conservan en el volumen `postgres_data`.
 
 ```text
-                  ┌──────────────────────┐
-                  │      Navegador       │
-                  │                      │
-                  │   localhost:8080     │
-                  └──────────┬───────────┘
-                             │
-                             │ HTTP
-                             ▼
-                  ┌──────────────────────┐
-                  │    Contenedor Web    │
-                  │                      │
-                  │    Python + Flask    │
-                  │      Puerto 5000     │
-                  └──────────┬───────────┘
-                             │
-                             │ Red Docker
-                             ▼
-                  ┌──────────────────────┐
-                  │ Contenedor PostgreSQL│
-                  │                      │
-                  │    PostgreSQL 18     │
-                  │      Puerto 5432     │
-                  └──────────┬───────────┘
-                             │
-                             ▼
-                  ┌──────────────────────┐
-                  │    Docker Volume     │
-                  │                      │
-                  │    postgres_data     │
-                  └──────────────────────┘
+Navegador (localhost:8080)
+            |
+            v
+     web: Flask (5000)
+            |
+       Red Docker
+            |
+            v
+   db: PostgreSQL (5432)
+            |
+            v
+   Volumen postgres_data
+```
 
-## 6. Estructura del proyecto
-
-La estructura principal del proyecto es:
+## 3. Estructura del repositorio
 
 ```text
-inventario-devops/
-│
-├── app.py
-├── database.py
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-├── init.sql
-├── .dockerignore
-├── .gitignore
-├── README.md
-│
+Parcial-1-DevOps/
+├── .github/workflows/
+│   ├── ci.yml
+│   └── cd.yml
+├── tests/
+│   ├── test_filtros.py
+│   ├── test_integracion.py
+│   └── test_postgresql.py
 ├── templates/
 │   ├── index.html
 │   └── editar.html
-│
-└── static/
-    ├── style.css
-    └── logo.png
+├── static/
+│   ├── style.css
+│   └── logo.png
+├── app.py
+├── database.py
+├── filtros.py
+├── init.sql
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── pytest.ini
+└── README.md
 ```
 
-### Principales archivos y carpetas
+`app.py` contiene las rutas y operaciones CRUD; `database.py` gestiona las conexiones y consultas a PostgreSQL; `filtros.py` implementa los filtros; `init.sql` define la tabla inicial; y los archivos de `.github/workflows/` automatizan las pruebas y la publicación de la imagen.
 
-| Archivo / Carpeta | Descripción |
-|---|---|
-| `app.py` | Contiene la aplicación Flask, sus rutas y las operaciones CRUD. |
-| `database.py` | Contiene la configuración de conexión y consultas a PostgreSQL. |
-| `requirements.txt` | Contiene las dependencias necesarias para ejecutar la aplicación Python. |
-| `Dockerfile` | Define la imagen utilizada para ejecutar la aplicación Flask. |
-| `docker-compose.yml` | Define los servicios de Flask y PostgreSQL, además de la configuración del volumen. |
-| `init.sql` | Contiene la estructura inicial de la tabla `productos`. |
-| `.dockerignore` | Define los archivos que no deben copiarse a la imagen Docker. |
-| `.gitignore` | Define los archivos que no deben ser enviados al repositorio Git. |
-| `templates/` | Contiene las plantillas HTML utilizadas por Flask. |
-| `static/` | Contiene los archivos CSS e imágenes de la aplicación. |
-| `README.md` | Contiene la documentación oficial del proyecto. |
+## 4. Instalación y ejecución local
 
----
+**Requisito:** Docker con Docker Compose disponible y en ejecución.
 
-## 7. Configuración
-
-La aplicación utiliza variables de entorno para establecer la conexión entre Flask y PostgreSQL.
-
-En el entorno de Docker Compose se utilizan las siguientes variables:
-
-```env
-DB_HOST=db
-DB_NAME=inventario
-DB_USER=postgres
-DB_PASSWORD=postgres
-```
-
-### Descripción de las variables
-
-| Variable | Descripción |
-|---|---|
-| `DB_HOST` | Nombre del servicio de PostgreSQL dentro de Docker Compose. |
-| `DB_NAME` | Nombre de la base de datos utilizada por la aplicación. |
-| `DB_USER` | Usuario utilizado para conectarse a PostgreSQL. |
-| `DB_PASSWORD` | Contraseña del usuario de PostgreSQL. |
-
-> **Importante:** El archivo `.env` utilizado para configuraciones locales no debe incluirse en el repositorio, ya que puede contener información sensible.
-
----
-
-## 8. ¿Cómo ejecutar el proyecto?
-
-Para ejecutar el proyecto desde cero, una persona que tenga acceso al repositorio puede seguir los siguientes pasos.
-
-### 8.1 Clonar el repositorio
-
-Ejecutar:
+Clonar el repositorio:
 
 ```bash
 git clone https://github.com/Santi104/Parcial-1-DevOps.git
-```
-
-Ingresar a la carpeta del proyecto:
-
-```bash
 cd Parcial-1-DevOps
 ```
 
-### 8.2 Verificar Docker
-
-Es necesario tener Docker instalado y ejecutándose.
-
-Comprobar la instalación con:
-
-```bash
-docker --version
-```
-
-Y:
-
-```bash
-docker compose version
-```
-
-### 8.3 Construir y ejecutar el proyecto
-
-Para construir la imagen de la aplicación y levantar los servicios:
-
-```bash
-docker compose up --build
-```
-
-También se puede ejecutar en segundo plano:
+Construir e iniciar los servicios:
 
 ```bash
 docker compose up -d --build
 ```
 
-Docker Compose iniciará los siguientes servicios:
+Comprobar los contenedores:
 
-- Aplicación web desarrollada con Flask.
-- Base de datos PostgreSQL.
-
-### 8.4 Acceder a la aplicación
-
-Una vez iniciados los contenedores, abrir un navegador y acceder a:
-
-```text
-http://localhost:8080
+```bash
+docker compose ps
 ```
 
-Desde allí se podrá utilizar el sistema de inventario.
+Abrir **http://localhost:8080** y utilizar el formulario de registro, la tabla de productos y los filtros.
 
-### 8.5 Detener los contenedores
-
-Para detener los servicios:
+Detener los servicios sin eliminar el volumen de datos:
 
 ```bash
 docker compose down
 ```
 
-Este comando detiene y elimina los contenedores, pero conserva el volumen de PostgreSQL.
-
-### 8.6 Volver a iniciar el proyecto
-
-Para iniciar nuevamente los servicios:
+Volver a iniciarlos:
 
 ```bash
 docker compose up -d
 ```
 
-Los datos previamente almacenados permanecerán disponibles gracias al volumen `postgres_data`.
+**Persistencia:** el volumen `postgres_data` conserva los registros entre reinicios. No ejecutar `docker compose down -v` si se desea mantener la información.
 
----
+### Variables de conexión
 
-## 9. Git y trabajo colaborativo
+El archivo `docker-compose.yml` configura los siguientes valores para el entorno académico:
 
-El proyecto utiliza **Git** para el control de versiones y **GitHub** como plataforma para alojar el repositorio y facilitar el trabajo colaborativo.
-
-El desarrollo se organizó utilizando diferentes *branches* para separar las principales partes del proyecto.
-
-La estructura de trabajo definida es:
-
-```text
-main
-│
-├── feature-aplicacion
-├── feature-base-datos
-├── feature-docker
-└── feature-compose
-```
-
-### `feature-aplicacion`
-
-Branch destinada al desarrollo de la aplicación web, incluyendo:
-
-- Aplicación Flask.
-- Rutas.
-- Operaciones CRUD.
-- Plantillas HTML.
-- Estilos CSS.
-- Interfaz del sistema.
-
-### `feature-base-datos`
-
-Branch destinada al desarrollo relacionado con PostgreSQL, incluyendo:
-
-- Configuración de la conexión.
-- Archivo `database.py`.
-- Archivo `init.sql`.
-- Estructura de la tabla `productos`.
-
-### `feature-docker`
-
-Branch destinada a la configuración de Docker, incluyendo:
-
-- `Dockerfile`.
-- Imagen de la aplicación.
-- Instalación de dependencias.
-- Configuración del contenedor de la aplicación.
-
-### `feature-compose`
-
-Branch destinada a la configuración de Docker Compose, incluyendo:
-
-- Servicio de Flask.
-- Servicio de PostgreSQL.
-- Comunicación entre los servicios.
-- Variables de entorno.
-- Volumen de PostgreSQL.
-
-Los cambios desarrollados en las diferentes branches se integran posteriormente a `main` mediante **Pull Requests**.
-
-### Repositorio
-
-Repositorio oficial del proyecto:
-
-https://github.com/Santi104/Parcial-1-DevOps
-
----
-
-## 10. Persistencia
-
-Para garantizar la persistencia de los datos de PostgreSQL se implementó un volumen Docker denominado:
-
-```text
-postgres_data
-```
-
-El volumen se declara en `docker-compose.yml`:
-
-```yaml
-volumes:
-  postgres_data:
-```
-
-Y se utiliza en el servicio de PostgreSQL:
-
-```yaml
-volumes:
-  - postgres_data:/var/lib/postgresql
-```
-
-De esta forma, los datos de PostgreSQL se almacenan en el volumen y no dependen directamente del ciclo de vida del contenedor.
-
-### Comprobación de persistencia
-
-La persistencia se comprobó mediante el siguiente procedimiento:
-
-1. Se iniciaron los servicios:
-
-```bash
-docker compose up -d
-```
-
-2. Se ingresó a la aplicación:
-
-```text
-http://localhost:8080
-```
-
-3. Se agregó un producto al inventario.
-
-4. Se verificó que el producto apareciera correctamente en la aplicación.
-
-5. Se detuvieron los contenedores:
-
-```bash
-docker compose down
-```
-
-6. Se iniciaron nuevamente los servicios:
-
-```bash
-docker compose up -d
-```
-
-7. Se ingresó nuevamente a:
-
-```text
-http://localhost:8080
-```
-
-8. Se comprobó que el producto continuaba registrado.
-
-Con esta prueba se verificó que los datos permanecen almacenados después de detener y volver a iniciar los contenedores.
-
-> **Importante:** No se debe utilizar `docker compose down -v` si se desea conservar la información almacenada, ya que este comando también elimina los volúmenes asociados al proyecto.
-
----
-
-## 11. Estado del proyecto
-
-El proyecto cuenta con las siguientes funcionalidades y componentes:
-
-- [x] Aplicación web desarrollada con Flask.
-- [x] Registro de productos.
-- [x] Consulta de productos.
-- [x] Edición de productos.
-- [x] Eliminación de productos.
-- [x] Base de datos PostgreSQL.
-- [x] Dockerfile.
-- [x] Docker Compose.
-- [x] Comunicación entre Flask y PostgreSQL.
-- [x] Variables de entorno.
-- [x] Volumen para persistencia.
-- [x] Control de versiones con Git.
-- [x] Repositorio en GitHub.
-- [x] Organización mediante branches.
-- [x] Documentación mediante `README.md`.
-
----
-
-## 12. Información académica
-
-| Información | Detalle |
+| Variable | Valor |
 |---|---|
-| **Asignatura** | Electiva DevOps |
-| **Evaluación** | Primer Parcial – Mini Proyecto |
-| **Docente** | Ph.D. Angela María Vargas Arcila |
+| `DB_HOST` | `db` |
+| `DB_NAME` | `inventario` |
+| `DB_USER` | `postgres` |
+| `DB_PASSWORD` | `postgres` |
 
----
+Estas credenciales son únicamente para desarrollo y demostración; no deben reutilizarse en producción.
 
-## 13. Integrantes
+## 5. Pruebas automatizadas
 
-| Integrante | Rol / Trabajo realizado |
+El proyecto cuenta con **12 pruebas** distribuidas así:
+
+| Archivo | Cantidad | Comprobaciones |
+|---|---:|---|
+| `tests/test_filtros.py` | 7 | Filtros por categoría y agotados, combinación, ausencia de coincidencias y conservación de datos originales |
+| `tests/test_integracion.py` | 4 | Respuestas HTTP de Flask y representación HTML con filtros; emplean datos simulados |
+| `tests/test_postgresql.py` | 1 | Integración real de Flask con PostgreSQL: registrar, consultar, editar y eliminar un producto |
+| **Total** | **12** | |
+
+Las pruebas de filtros y HTTP también permiten comprobar que las nuevas modificaciones no alteran los comportamientos esperados (regresión). La prueba de CRUD verifica las operaciones originales contra una base PostgreSQL real.
+
+### Ejecutar las pruebas con PostgreSQL en Docker
+
+La prueba real utiliza una base **separada** llamada `inventario_test`; no debe ejecutarse contra `inventario`.
+
+Con los servicios iniciados, crear la base de pruebas **una sola vez**:
+
+```bash
+docker compose exec db psql -U postgres -d postgres -c "CREATE DATABASE inventario_test;"
+```
+
+Si la base ya existe, omitir ese comando. Crear la tabla de pruebas (puede ejecutarse más de una vez):
+
+```bash
+docker compose exec db psql -U postgres -d inventario_test -c "CREATE TABLE IF NOT EXISTS productos (id SERIAL PRIMARY KEY, nombre VARCHAR(100) NOT NULL, categoria VARCHAR(100) NOT NULL, precio NUMERIC(10,2) NOT NULL, cantidad INTEGER NOT NULL);"
+```
+
+La imagen de aplicación se orienta a ejecutar Flask. Para realizar una prueba puntual dentro del contenedor, instalar pytest en ese contenedor:
+
+```bash
+docker compose exec web python -m pip install "pytest>=8,<10"
+```
+
+Como el `Dockerfile` copia los archivos al construir la imagen, **reconstruir `web` después de añadir o actualizar pruebas** para que el contenedor contenga los archivos más recientes:
+
+```bash
+docker compose up -d --build web
+```
+
+Si se reconstruye `web`, reinstalar pytest en el contenedor nuevo:
+
+```bash
+docker compose exec web python -m pip install "pytest>=8,<10"
+```
+
+Ejecutar las 12 pruebas con la base aislada:
+
+```bash
+docker compose exec -e DB_NAME=inventario_test -e TEST_DB_NAME=inventario_test web python -m pytest -v
+```
+
+**Resultado verificado:** `12 passed`. La instalación de pytest dentro del contenedor es temporal; la ejecución automatizada de CI instala las dependencias desde `requirements.txt`.
+
+## 6. Integración continua en GitHub Actions
+
+**Archivo:** `.github/workflows/ci.yml`  
+**Workflow:** `Pruebas automaticas`
+
+Se ejecuta al abrir o actualizar un Pull Request dirigido a `main` y al hacer `push` a `main`. El flujo implementado:
+
+1. Descarga el repositorio.
+2. Configura Python 3.11 e instala `requirements.txt`.
+3. Inicia PostgreSQL 18 como servicio con la base `inventario_test`.
+4. Prepara la tabla `productos` y las variables de conexión de pruebas.
+5. Ejecuta `python -m pytest -v` y muestra los resultados.
+
+Se verificaron **12 pruebas aprobadas** tanto en el Pull Request de integración como después de fusionarlo a `main`.
+
+### Demostración de fallo y corrección
+
+Se creó una rama temporal `prueba-fallo-ci` y un Pull Request de demostración. Se modificó intencionalmente una afirmación de `tests/test_filtros.py`, sin alterar el código de la aplicación.
+
+| Momento | Commit | Resultado de CI |
+|---|---|---|
+| Prueba intencionalmente incorrecta | `283f676` | **1 failed, 11 passed** |
+| Afirmación corregida | `43d9ed4` | **12 passed** |
+
+La demostración quedó registrada en el historial de GitHub Actions. El Pull Request de demostración se cerró **sin fusionarlo**; el código correcto permaneció en `main`.
+
+**Evidencia:** [Ejecuciones de GitHub Actions](https://github.com/Santi104/Parcial-1-DevOps/actions).
+
+## 7. Entrega continua y publicación de la imagen
+
+**Archivo:** `.github/workflows/cd.yml`  
+**Workflow:** `Entrega continua - Docker y GHCR`
+
+Después de un CI exitoso correspondiente a un `push` a `main`, el workflow construye la imagen a partir del `Dockerfile` y la publica en GHCR, con la etiqueta `latest` y otra asociada al commit.
+
+**Imagen publicada:**
+
+```text
+ghcr.io/santi104/parcial-1-devops:latest
+```
+
+Tras la integración de las pruebas PostgreSQL en `main`, se verificó que tanto CI como CD finalizaron correctamente.
+
+### Descargar y ejecutar la imagen de GHCR
+
+Con los servicios de Docker Compose en funcionamiento, descargar la imagen:
+
+```bash
+docker pull ghcr.io/santi104/parcial-1-devops:latest
+```
+
+Comprobar su presencia:
+
+```bash
+docker image ls ghcr.io/santi104/parcial-1-devops
+```
+
+Iniciar una segunda instancia de la aplicación usando la imagen **descargada**, en el puerto `8081`:
+
+```bash
+docker run -d --name inventario-ghcr-prueba \
+  --network parcial-1-devops_default \
+  -p 8081:5000 \
+  -e DB_HOST=db \
+  -e DB_NAME=inventario \
+  -e DB_USER=postgres \
+  -e DB_PASSWORD=postgres \
+  ghcr.io/santi104/parcial-1-devops:latest
+```
+
+> El nombre de red `parcial-1-devops_default` corresponde al nombre de proyecto Docker Compose utilizado en esta demostración; puede variar si la carpeta o el nombre del proyecto cambian. La segunda instancia comparte la base de datos del entorno local, por lo que cualquier modificación de productos afecta a ese inventario.
+
+Verificar el contenedor y abrir **http://localhost:8081**:
+
+```bash
+docker ps --filter name=inventario-ghcr-prueba
+```
+
+Se comprobó que la página cargaba correctamente, mostraba los productos y presentaba los filtros nuevos.
+
+Detener y eliminar **solo** el contenedor de demostración:
+
+```bash
+docker stop inventario-ghcr-prueba
+docker rm inventario-ghcr-prueba
+```
+
+Esto no elimina la imagen descargada ni detiene los servicios de Docker Compose.
+
+## 8. Archivos de configuración y trabajo colaborativo
+
+El entorno reproducible del proyecto se configura con `Dockerfile`, `docker-compose.yml` y `init.sql`: imagen de Flask, servicios web y PostgreSQL, variables de entorno, red interna, inicialización de la tabla y volumen persistente. **No se implementó Terraform.**
+
+El equipo trabajó con ramas de funcionalidades y Pull Requests hacia `main`, incluyendo `feature-aplicacion`, `feature-base-datos`, `feature-docker`, `feature-compose` y `feature-pruebas-postgresql`. Los cambios se integraron después de comprobar los resultados de GitHub Actions.
+
+## 9. Distribución del trabajo
+
+| Integrante | Trabajo registrado en la organización inicial |
 |---|---|
-| [Ana Judith Velasquez] | Desarrollo de la aplicación |
-| [Maria del Mar Perez] | Base de datos |
-| [Edi Santiago Monzon] | Docker |
-| [David Giron] | Docker Compose |
+| Ana Judith Velasquez Cañaveral | Aplicación |
+| Maria del Mar Perez Montenegro | Base de datos |
+| Edi Santiago Monzon | Docker |
+| David Segundo Giron Acosta | Docker Compose |
+
+El segundo parcial incorporó adicionalmente filtros, pruebas, automatización CI/CD y publicación de la imagen en GHCR como trabajo del equipo.
