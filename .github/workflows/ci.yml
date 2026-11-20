@@ -52,3 +52,18 @@ jobs:
 
       - name: Ejecutar pruebas
         run: python -m pytest -v
+
+  gitleaks:
+    name: Detectar secretos con Gitleaks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Analizar secretos
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/repositorio" \
+            zricethezav/gitleaks:latest \
+            detect --source=/repositorio --no-git --redact --exit-code=1
