@@ -48,7 +48,7 @@ jobs:
           tags: inventario-analisis:${{ matrix.suffix }}
 
       - name: Analizar vulnerabilidades con Trivy
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: inventario-analisis:${{ matrix.suffix }}
           format: table
