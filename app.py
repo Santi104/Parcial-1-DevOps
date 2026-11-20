@@ -1,9 +1,108 @@
-from flask import Flask, render_template, request, redirect, url_for
+import logging
+import time
+
+from flask import Flask, Response, g, render_template, request, redirect, url_for
+from prometheus_client import (
+    Counter,
+    Gauge,
+    Histogram,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+)
+
 from database import obtener_productos, obtener_conexion
 from filtros import filtrar_productos
 
 app = Flask(__name__)
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+app.logger.setLevel(logging.INFO)
+
+HTTP_REQUESTS = Counter(
+    "http_requests_total",
+    "Total de solicitudes HTTP",
+    ["method", "endpoint", "http_status"],
+)
+
+HTTP_ERRORS = Counter(
+    "http_errors_total",
+    "Total de respuestas HTTP con error",
+    ["method", "endpoint", "http_status"],
+)
+
+HTTP_IN_PROGRESS = Gauge(
+    "http_requests_in_progress",
+    "Solicitudes HTTP en curso",
+    ["method", "endpoint"],
+)
+
+HTTP_REQUEST_DURATION = Histogram(
+    "http_request_duration_seconds",
+    "Duracion de las solicitudes HTTP en segundos",
+    ["method", "endpoint"],
+)
+
+
+@app.before_request
+def iniciar_medicion():
+    if request.path == "/metrics":
+        return
+
+    g.inicio_solicitud = time.perf_counter()
+    g.endpoint_metrica = request.url_rule.rule if request.url_rule else "desconocido"
+
+    HTTP_IN_PROGRESS.labels(
+        method=request.method,
+        endpoint=g.endpoint_metrica,
+    ).inc()
+
+
+@app.after_request
+def finalizar_medicion(response):
+    if request.path == "/metrics":
+        return response
+
+    if not hasattr(g, "inicio_solicitud"):
+        return response
+
+    metodo = request.method
+    endpoint = g.endpoint_metrica
+    estado = str(response.status_code)
+
+    HTTP_REQUESTS.labels(
+        method=metodo,
+        endpoint=endpoint,
+        http_status=estado,
+    ).inc()
+
+    if response.status_code >= 400:
+        HTTP_ERRORS.labels(
+            method=metodo,
+            endpoint=endpoint,
+            http_status=estado,
+        ).inc()
+
+    HTTP_REQUEST_DURATION.labels(
+        method=metodo,
+        endpoint=endpoint,
+    ).observe(time.perf_counter() - g.inicio_solicitud)
+
+    HTTP_IN_PROGRESS.labels(
+        method=metodo,
+        endpoint=endpoint,
+    ).dec()
+
+    return response
+
+
+@app.get("/metrics")
+def metricas():
+    return Response(generate_latest(), content_type=CONTENT_TYPE_LATEST)
 
 @app.route("/")
 def inicio():
@@ -43,6 +142,12 @@ def agregar_producto():
 
     conexion.commit()
 
+    app.logger.info(
+        "Producto agregado | nombre=%s | categoria=%s",
+        nombre,
+        categoria,
+    )
+
     cursor.close()
     conexion.close()
 
@@ -76,6 +181,12 @@ def editar_producto(id):
 
         conexion.commit()
 
+        app.logger.info(
+            "Producto actualizado | id=%s | nombre=%s",
+            id,
+            nombre,
+        )
+
         cursor.close()
         conexion.close()
 
@@ -108,6 +219,11 @@ def eliminar_producto(id):
     )
 
     conexion.commit()
+
+    app.logger.info(
+        "Producto eliminado | id=%s",
+        id,
+    )
 
     cursor.close()
     conexion.close()
