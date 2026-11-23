@@ -543,7 +543,7 @@ Las evidencias se organizan en la carpeta `evidencias/` del repositorio. Las cap
 | Análisis de secretos con Gitleaks                       | `evidencias/04-gitleaks.png`                                        |
 | Análisis de vulnerabilidades con Trivy                  | `evidencias/05-trivy-parte1.png`, `evidencias/05-trivy-parte2.png` y `evidencias/05-trivy-parte3.png`|
 | Entrega continua y publicación automática | `evidencias/06-cd-parte1.png` y `evidencias/06-cd-parte2.png`                     |
-| Imagen publicada en GHCR con sus etiquetas              | `evidencias/07-ghcr.png`                                            |
+| Imagen publicada en GHCR con sus etiquetas              | `evidencias/07-ghcr-parte1.png` y `evidencias/07-ghcr-parte2.png`                                            |
 | Logs de operaciones y errores de Flask                  | `evidencias/08-logs.png`                                            |
 | Endpoint de métricas de Prometheus                      | `evidencias/09-metrics.png`                                         |
 | Objetivo de Prometheus en estado UP                     | `evidencias/10-prometheus.png`                                      |
