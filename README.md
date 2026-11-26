@@ -549,13 +549,3 @@ Las evidencias se organizan en la carpeta `evidencias/` del repositorio. Las cap
 | Objetivo de Prometheus en estado UP                     | `evidencias/10-prometheus.png`                                      |
 | Dashboard de Grafana con los cuatro paneles             | `evidencias/11-grafana.png`                                         |
 | Dashboard mostrando actividad por solicitudes y errores | `evidencias/12-grafana-trafico.png`                                 |
-
-### Demostración en vivo
-
-Durante la sustentación se mostrará la aplicación funcionando, la ejecución de pruebas, los workflows de GitHub Actions, la imagen publicada en GHCR, los resultados de seguridad, la consulta de logs y el dashboard de Grafana.
-
-Para demostrar la observabilidad se realizarán solicitudes a la aplicación y se generarán respuestas HTTP `404`, comprobando que los registros y las métricas reflejan esa actividad.
-
-Las capturas complementan la demostración, pero no sustituyen la ejecución en vivo de los componentes.
-
-**Nota:** los nombres de las capturas deben coincidir con los archivos que realmente se incorporen a `evidencias/`. Las evidencias de la ejecución final de CI/CD y GHCR se obtendrán después de integrar los cambios en `main`.
